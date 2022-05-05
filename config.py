@@ -1,0 +1,16 @@
+import os
+import sys
+
+# 
+MIN_STARS = 10
+
+#
+SENTENCE_MIN_LENGTH = 3
+
+# 
+TEXT_PREPROCESS_CHOICE = "cased"
+BERT_KIND = "large"
+
+# 
+KEYWORD_FREQUENCY_THRESHOLD = 3
+TOPIC_FREQUENCY_THRESHOLD = 1

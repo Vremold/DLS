@@ -1,0 +1,31 @@
+# Ignore Mac system files
+.DS_store
+
+# ignore too big data folder
+Data/GH/CleanedData/*
+Data/GH/RawData/*
+Data/NER/*
+Data/Verification/*
+
+# ignore built files
+*.mdl
+*.mm
+*.index
+*.dict
+*.gexf
+*.dat
+*.vec
+
+# ignore  pretrained models downloaded from huggingface
+NER/pretrained
+
+# ignore cache folder
+cache
+
+# ignore specific files
+NonstructureInfoExtraction/exports/*
+NonstructureInfoExtraction/hin/*
+StructureInfoExtraction/KGE/checkpoint/*
+StructureInfoExtraction/KGE/KE/*
+StructureInfoExtraction/KGE/KG/*.txt
+NER/data/*
