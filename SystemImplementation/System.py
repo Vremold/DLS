@@ -1,5 +1,6 @@
 import json
 import sys
+sys.path.append("..")
 
 from fuzzywuzzy import fuzz
 import numpy as np
@@ -7,12 +8,12 @@ import numpy as np
 from Query import QueryPredNE, QueryWordExtractor
 from Enricher import ENRicher
 from Searcher import Seacher
-from ..pathutil import HIN, HIN_EMBEDDING, KG, KG_NODE_EMBEDDING, KG_RELATION_EMBEDDING
-from ..config import TEXT_PREPROCESS_CHOICE, BERT_KIND
+from pathutil import HIN, HIN_EMBEDDING, KG, KG_NODE_EMBEDDING, KG_RELATION_EMBEDDING, PROJECT_ABS_DIR
+from config import TEXT_PREPROCESS_CHOICE, BERT_KIND
 
 class NERefiner(object):
     def __init__(self, ne2ne_file, ne2cate_file):
-        self.neabbr = NEAbbr()
+        # self.neabbr = NEAbbr()
         with open(ne2ne_file, "r", encoding="utf-8") as inf:
             self.ne2ne = json.load(inf)
         with open(ne2cate_file, "r", encoding="utf-8") as inf:
@@ -33,15 +34,15 @@ class NERefiner(object):
 
 class UI(object):
     def __init__(self):
-        token_dict_file = "../NER/data/token_dict.pkl"
-        pretrained_model = "../NER/pretrained/bert_{}_{}".format(BERT_KIND, TEXT_PREPROCESS_CHOICE)
-        trained_model = "../NER/builds/bert_{}_{}".format(BERT_KIND, TEXT_PREPROCESS_CHOICE)
+        token_dict_file = PROJECT_ABS_DIR + "/NER/data/token_dict.pkl"
+        pretrained_model = PROJECT_ABS_DIR + "/NER/pretrained/bert_{}_{}".format(BERT_KIND, TEXT_PREPROCESS_CHOICE)
+        trained_model = PROJECT_ABS_DIR + "/NER/builds/bert_{}_{}.mdl".format(BERT_KIND, TEXT_PREPROCESS_CHOICE)
         self.qpne = QueryPredNE(
             token_dict_file=token_dict_file, 
             pretrained_model=pretrained_model, 
             trained_model=trained_model
         )
-        self.ne_refiner = NERefiner("../StructureInfoExtraction/BeforeKG/ne2ne.json", "../StructureInfoExtraction/BeforeKG/ne2category.json")
+        self.ne_refiner = NERefiner(PROJECT_ABS_DIR+"/StructureInfoExtraction/BeforeKG/ne2ne.json", PROJECT_ABS_DIR+"/StructureInfoExtraction/BeforeKG/ne2category.json")
         self.qwe = QueryWordExtractor()
         self.enricher = ENRicher()
         self.s = Seacher(HIN, HIN_EMBEDDING, KG, KG_NODE_EMBEDDING, KG_RELATION_EMBEDDING)
@@ -125,10 +126,20 @@ class UI(object):
         real_words = self.qwe.extract_useful_words(text)
         repos = self.s.search(nes, real_words, alpha=alpha)
         return nes, real_words, repos
+    
+    def query_for_ui(self, text, alpha=0.35):
+        nes = self.qpne.predict(text)
+        nes = self.ne_refiner.process(nes)
+        real_words = self.qwe.extract_useful_words(text)
+        print(nes)
+        print(real_words)
+        search_result = self.s.search(nes, real_words, alpha=alpha)[:20]
+        print(search_result)
+        return [item[0] for item in search_result]
 
 if __name__ == "__main__":
     system = UI()
     text = "a tool which is able to finds errors and problems for javacript"
     text = "I want a library that help develop Salesforce API applications with JavaScript"
-    nes, real_words, repos = system.query(text)
-    print(repos[:20])
+    repos = system.query_for_ui(text)
+    print(repos)

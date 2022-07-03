@@ -1,12 +1,13 @@
 import json
 import sys
+sys.path.append("..")
 import pickle
 import os
 import random
 
 import numpy as np
 
-from ..pathutil import KG_NODE_EMBEDDING, KG_RELATION_EMBEDDING, HIN_EMBEDDING
+from pathutil import KG_NODE_EMBEDDING, KG_RELATION_EMBEDDING, HIN_EMBEDDING
 
 class NEEnricher(object):
     def __init__(self, ent_vec_file):
