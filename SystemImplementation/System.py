@@ -131,10 +131,7 @@ class UI(object):
         nes = self.qpne.predict(text)
         nes = self.ne_refiner.process(nes)
         real_words = self.qwe.extract_useful_words(text)
-        print(nes)
-        print(real_words)
         search_result = self.s.search(nes, real_words, alpha=alpha)[:20]
-        print(search_result)
         return [item[0] for item in search_result]
 
 if __name__ == "__main__":

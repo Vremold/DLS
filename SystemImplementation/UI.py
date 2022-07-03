@@ -5,11 +5,13 @@ import json
 
 from flask import Flask
 from flask import request
+from flask_cors import cross_origin, CORS
 from System import UI
 from pathutil import PROJECT_ABS_DIR
 
-# system = UI()
+system = UI()
 app = Flask(__name__)
+CORS(app, resources=r'/*')
 
 """Sample response for testing API"""
 sample_payloads = [{
@@ -47,14 +49,17 @@ def get_payloads(repos):
         
 
 @app.route("/")
+@cross_origin()
 def index():
     return "Thanks for using Semantical Library Retrieval"
 
 @app.route("/favicon.ico")
+@cross_origin()
 def favicon():
     return ""
 
 @app.route("/search_demo", methods=["GET", "POST"])
+@cross_origin()
 def smaple_search():
     if request.method == "GET":
         text = request.args.get("query", "")
@@ -74,6 +79,7 @@ def smaple_search():
     }
 
 @app.route("/search", methods=["GET", "POST"])
+@cross_origin()
 def search():
     if request.method == "GET":
         text = request.args.get("query", "")
@@ -86,11 +92,12 @@ def search():
             "payload": None,
             "message": "Invalid Query!"
         }
-    # text = ""
-    # repos = system.query_for_ui(text)
-    repos = ["theonjs#theon"] * 20
+    repos = system.query_for_ui(text)
+    print(repos)
+    # repos = ["theonjs#theon"] * 20
     
     payloads = get_payloads(repos)
+    
     if not payloads:
         return {
             "success": False,
