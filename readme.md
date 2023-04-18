@@ -1,5 +1,6 @@
 # Development Library Search System
 这篇工作主要是从现有的前端开源仓库中挖掘结构化的功能语义信息和非结构化的功能语义信息，并基于此面向用户query提供检索服务.
+Code for paper [An Open-source Repository Retrieval Service Using Functional Semantics for Software Developers](https://ieeexplore.ieee.org/document/9860185/)
 <img src="./images/framework.png">
 
 ### 数据准备
